@@ -12,6 +12,7 @@ if (isset($_POST['register'])) {
     $user_surname = htmlspecialchars($_POST['user_surname']);
     $user_email = htmlspecialchars($_POST['user_email']);
     $user_password = htmlspecialchars($_POST['user_password']);
+    $user_authority = htmlspecialchars($_POST['user_authority']);
     $captcha = $_POST['captcha'];
     $entered_captcha = $_POST['entered_captcha'];
 
@@ -31,18 +32,24 @@ if (isset($_POST['register'])) {
             user_name=:user_name,
             user_surname=:user_surname,
             user_email=:user_email,
-            user_password=:user_password
+            user_password=:user_password,
+            user_authority=:user_authority
         ");
             $insert = $saveUser->execute(array(
                 'user_name' => $user_name,
                 'user_surname' => $user_surname,
                 'user_email' => $user_email,
-                'user_password' => $password
+                'user_password' => $password,
+                'user_authority' => $user_authority
             ));
 
             if ($insert) {
                 $_SESSION['user_email'] = $user_email;
-                header("Location:../home.php");
+                if($user_authority == 0) {
+                    header("Location:../home.php");
+                }else {
+                    header("Location:../products.php");
+                }
             } else {
                 header("Location:../register.php?register=error");
             }
