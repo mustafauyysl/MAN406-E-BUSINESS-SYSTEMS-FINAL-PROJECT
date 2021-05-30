@@ -66,7 +66,7 @@ if ($isUser == 0) {
                                 <input type="hidden" name="product_title" value="<?php echo $getProducts['product_title']; ?>">
                                 <input type="hidden" name="product_price" value="<?php echo $getProducts['product_price']; ?>">
                                 <input type="hidden" name="quantity" value="1">
-                                <button class="add-button" type="submit" name="addToCart">
+                                <button class="add-button" type="submit" name="addToCart" style="border-width: .5px;;">
                                     <i class="fas fa-plus" style="color:#4c3398;"></i>
                                 </button>
                             </form>
