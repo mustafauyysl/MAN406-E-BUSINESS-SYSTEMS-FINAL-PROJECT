@@ -1,4 +1,8 @@
-<?php require_once "header.php"; ?>
+<?php
+include "header.php";
+include "./settings/functions.php";
+$captcha = generateCaptcha();
+?>
 <div id="home-banner-container">
   <div class="container" id="home-banner-inner">
     <div class="row">
@@ -41,6 +45,13 @@
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
             <input type="password" name="user_password" required class="form-control" />
+          </div>
+          <div class="input-group my-4">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon3"><?php echo $captcha; ?></span>
+            </div>
+            <input type="hidden" name="captcha" value="<?php echo $captcha; ?>">
+            <input type="text" required class="form-control" name="entered_captcha" id="basic-url" aria-describedby="basic-addon3">
           </div>
           <button type="submit" class="btn btn-primary w-100" style="background-color: #4c3398" name="register">
             Register
