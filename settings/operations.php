@@ -63,10 +63,11 @@ if (isset($_POST['login'])) {
     $entered_captcha = $_POST['entered_captcha'];
 
     if ($captcha == $entered_captcha) {
-        $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:user_email and user_password=:user_password");
+        $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:user_email and user_password=:user_password and user_authority=:user_authority");
         $isExistUser->execute(array(
             'user_email' => $user_email,
-            'user_password' => $user_password
+            'user_password' => $user_password,
+            'user_authority' => 0
         ));
 
         $count = $isExistUser->rowCount();
