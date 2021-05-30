@@ -1,4 +1,10 @@
-<?php include "header.php"; ?>
+<?php
+include "header.php";
+
+$isAdminLogin = $_GET['admin'] == "yes";
+
+?>
+
 <div id="home-banner-container">
   <div class="container" id="home-banner-inner">
     <div class="row">
@@ -8,17 +14,24 @@
                 height: 200px;
                 width: 200px;
                 border-radius: 100px;
-                padding: 70px 0;
+                padding: 65px 0;
                 text-align: center;
               ">
-          <h1>götür</h1>
+          <h1 class="font-weight-bold" style="color:#4c3398;font-size: 50px;">götür</h1>
         </div>
         <h1 class="text-white w-75">At your door in minutes</h1>
       </div>
       <div class="col"></div>
       <div class="col">
         <form class="login-form" action="./settings/operations.php" method="POST">
-          <h4 class="text-center mb-4">Login</h4>
+          <h4 class="text-center mb-4"><?php if ($isAdminLogin) { ?> Admin Login <?php } else { ?> User Login <?php } ?></h4>
+          <?php
+          if ($_GET['login'] == 'error') {
+          ?>
+            <div class="alert alert-danger" role="alert">
+              Email or password are invalid!
+            </div>
+          <?php } ?>
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
             <input type="email" required class="form-control" name="user_email" />
@@ -27,10 +40,15 @@
             <label for="exampleInputPassword1">Password</label>
             <input type="password" required class="form-control" name="user_password" />
           </div>
-          <button type="submit" class="btn btn-primary w-100" style="background-color: #4c3398" name="login">
+          <div class="text-center mb-3">
+            <a href="<?php if ($isAdminLogin) { ?> login.php <?php } else { ?> ?admin=yes <?php } ?>"><?php if ($isAdminLogin) { ?> User Login <?php } else { ?> Admin Login <?php } ?></a>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="background-color: #4c3398" name="<?php if ($isAdminLogin) { ?>adminLogin<?php } else { ?>login<?php } ?>">
             Login
           </button>
         </form>
+
+
       </div>
     </div>
   </div>
