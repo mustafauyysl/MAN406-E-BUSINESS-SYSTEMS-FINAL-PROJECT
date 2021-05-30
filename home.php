@@ -26,7 +26,6 @@ if ($isUser == 0) {
     exit;
 }
 
-
 ?>
 <?php require_once "header.php"; ?>
 
@@ -57,24 +56,76 @@ if ($isUser == 0) {
                 ?>
                     <div class="col-3 mb-3">
                         <div class="card text-center">
-                            <img src="<?php echo $getProducts['product_img']; ?>" class="card-img-top" alt="<?php echo $getProducts['prodct_title']; ?>" />
+                            <img src="<?php echo $getProducts['product_img']; ?>" class="card-img-top" alt="<?php echo $getProducts['product_title']; ?>" />
                             <div class="card-body">
                                 <h5 class="card-title">₺ <?php echo $getProducts['product_price']; ?></h5>
                                 <p class="card-text"><?php echo $getProducts['product_title']; ?></p>
                                 <p class="card-text"><?php echo $getProducts['product_weight']; ?> gr</p>
                             </div>
-                            <div class="add-button">
-                                <i class="fas fa-plus" style="color:#4c3398;"></i>
-                            </div>
+                            <form action="./settings/operations.php" method="POST">
+                                <input type="hidden" name="product_title" value="<?php echo $getProducts['product_title']; ?>">
+                                <input type="hidden" name="product_price" value="<?php echo $getProducts['product_price']; ?>">
+                                <input type="hidden" name="quantity" value="1">
+                                <button class="add-button" type="submit" name="addToCart">
+                                    <i class="fas fa-plus" style="color:#4c3398;"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 <?php } ?>
             </div>
         </div>
-        <div class="col-3">
-            <div style="background-color: #fff; height: 100px; width: 100%;">
+        <div class="col-3 w-100 h-100 bg-white py-3">
+            <h4 class="text-center mb-2">Cart</h4>
+            <hr>
+            <?php
 
-            </div>
+            if ($_SESSION['cart']) { ?>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($_SESSION['cart'] as $product) { ?>
+
+                            <tr>
+                                <td><?php echo $product['quantity']; ?></td>
+                                <td><?php echo $product['product_title']; ?></td>
+                                <td>
+                                    <form action="./settings/operations.php" method="POST">
+                                        <input type="hidden" name="product_title" value="<?php echo $product['product_title']; ?>">
+                                        <button type="submit" name="removeFromCart" class="btn btn-danger">x</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php } ?>
+
+                    </tbody>
+                </table>
+                <?php
+                $total = 0;
+                foreach ($_SESSION['cart'] as $product) {
+                    $total = $total + ($product['quantity'] * $product['product_price']);
+                }
+                ?>
+                <div>
+                    <p class="display: flex; text-right"> = Total: <?php echo $total; ?> ₺</p>
+                    <hr>
+                </div>
+                <form action="./settings/operations.php" method="POST">
+                    <input type="hidden" name="order_price" value="<?php echo $total; ?>">
+                    <button type="submit" name="completeOrder" class="btn btn-primary w-100" style="background-color: rgba(76, 51, 152, 1); border-color:rgba(76, 51, 152, 1);">Complete Order</button>
+                </form>
+            <?php } else { ?>
+                <div class="text-center">
+                    <i class="fas fa-shopping-cart fa-5x" style="color: rgba(76, 51, 152, 0.3);"></i>
+                    <p class="mt-3">Cart is Empty</p>
+                </div>
+            <?php } ?>
         </div>
     </div>
 </div>
