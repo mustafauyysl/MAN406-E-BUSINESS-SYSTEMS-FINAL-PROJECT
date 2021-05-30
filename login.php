@@ -1,7 +1,8 @@
 <?php
 include "header.php";
-
+include "./settings/functions.php";
 $isAdminLogin = $_GET['admin'] == "yes";
+$captcha = generateCaptcha();
 
 ?>
 
@@ -31,6 +32,10 @@ $isAdminLogin = $_GET['admin'] == "yes";
             <div class="alert alert-danger" role="alert">
               Email or password are invalid!
             </div>
+          <?php } elseif ($_GET['captcha'] == 'error') { ?>
+            <div class="alert alert-danger" role="alert">
+              Captcha is invalid!
+            </div>
           <?php } ?>
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
@@ -39,6 +44,13 @@ $isAdminLogin = $_GET['admin'] == "yes";
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
             <input type="password" required class="form-control" name="user_password" />
+          </div>
+          <div class="input-group my-4">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon3"><?php echo $captcha; ?></span>
+            </div>
+            <input type="hidden" name="captcha" value="<?php echo $captcha; ?>">
+            <input type="text" required class="form-control" name="entered_captcha" id="basic-url" aria-describedby="basic-addon3">
           </div>
           <div class="text-center mb-3">
             <a href="<?php if ($isAdminLogin) { ?> login.php <?php } else { ?> ?admin=yes <?php } ?>"><?php if ($isAdminLogin) { ?> User Login <?php } else { ?> Admin Login <?php } ?></a>
