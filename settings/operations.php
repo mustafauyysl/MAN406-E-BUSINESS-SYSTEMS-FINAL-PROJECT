@@ -12,38 +12,45 @@ if (isset($_POST['register'])) {
     $user_surname = htmlspecialchars($_POST['user_surname']);
     $user_email = htmlspecialchars($_POST['user_email']);
     $user_password = htmlspecialchars($_POST['user_password']);
+    $captcha = $_POST['captcha'];
+    $entered_captcha = $_POST['entered_captcha'];
 
-    $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:mail");
-    $isExistUser->execute(array(
-        'mail' => $user_email
-    ));
+    if ($captcha == $entered_captcha) {
 
-    $count = $isExistUser->rowCount();
+        $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:mail");
+        $isExistUser->execute(array(
+            'mail' => $user_email
+        ));
 
-    if ($count == 0) {
-        $password = md5($user_password);
+        $count = $isExistUser->rowCount();
 
-        $saveUser = $db->prepare("INSERT INTO users SET
+        if ($count == 0) {
+            $password = md5($user_password);
+
+            $saveUser = $db->prepare("INSERT INTO users SET
             user_name=:user_name,
             user_surname=:user_surname,
             user_email=:user_email,
             user_password=:user_password
         ");
-        $insert = $saveUser->execute(array(
-            'user_name' => $user_name,
-            'user_surname' => $user_surname,
-            'user_email' => $user_email,
-            'user_password' => $password
-        ));
+            $insert = $saveUser->execute(array(
+                'user_name' => $user_name,
+                'user_surname' => $user_surname,
+                'user_email' => $user_email,
+                'user_password' => $password
+            ));
 
-        if ($insert) {
-            $_SESSION['user_email'] = $user_email;
-            header("Location:../home.php");
+            if ($insert) {
+                $_SESSION['user_email'] = $user_email;
+                header("Location:../home.php");
+            } else {
+                header("Location:../register.php?register=error");
+            }
         } else {
-            header("Location:../register.php?register=error");
+            header("Location:../register.php?register=exist_user");
         }
     } else {
-        header("Location:../register.php?register=exist_user");
+        header("Location:../register.php?captcha=error");
     }
 }
 
@@ -52,21 +59,27 @@ if (isset($_POST['register'])) {
 if (isset($_POST['login'])) {
     $user_email = $_POST['user_email'];
     $user_password = md5($_POST['user_password']);
+    $captcha = $_POST['captcha'];
+    $entered_captcha = $_POST['entered_captcha'];
 
-    $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:user_email and user_password=:user_password");
-    $isExistUser->execute(array(
-        'user_email' => $user_email,
-        'user_password' => $user_password
-    ));
+    if ($captcha == $entered_captcha) {
+        $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:user_email and user_password=:user_password");
+        $isExistUser->execute(array(
+            'user_email' => $user_email,
+            'user_password' => $user_password
+        ));
 
-    $count = $isExistUser->rowCount();
+        $count = $isExistUser->rowCount();
 
-    if ($count == 1) {
-        $_SESSION['user_email'] = $user_email;
-        header("Location:../home.php");
-        exit;
+        if ($count == 1) {
+            $_SESSION['user_email'] = $user_email;
+            header("Location:../home.php");
+            exit;
+        } else {
+            header("Location:../login.php?login=error");
+        }
     } else {
-        header("Location:../login.php?login=error");
+        header("Location:../login.php?captcha=error");
     }
 }
 
@@ -75,22 +88,28 @@ if (isset($_POST['login'])) {
 if (isset($_POST['adminLogin'])) {
     $user_email = $_POST['user_email'];
     $user_password = md5($_POST['user_password']);
+    $captcha = $_POST['captcha'];
+    $entered_captcha = $_POST['entered_captcha'];
 
-    $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:user_email and user_password=:user_password and user_authority=:user_authority");
-    $isExistUser->execute(array(
-        'user_email' => $user_email,
-        'user_password' => $user_password,
-        'user_authority' => 1
-    ));
+    if ($captcha == $entered_captcha) {
+        $isExistUser = $db->prepare("SELECT * FROM users WHERE user_email=:user_email and user_password=:user_password and user_authority=:user_authority");
+        $isExistUser->execute(array(
+            'user_email' => $user_email,
+            'user_password' => $user_password,
+            'user_authority' => 1
+        ));
 
-    $count = $isExistUser->rowCount();
+        $count = $isExistUser->rowCount();
 
-    if ($count == 1) {
-        $_SESSION['user_email'] = $user_email;
-        header("Location:../products.php");
-        exit;
+        if ($count == 1) {
+            $_SESSION['user_email'] = $user_email;
+            header("Location:../products.php");
+            exit;
+        } else {
+            header("Location:../login.php?admin=yes&login=error");
+        }
     } else {
-        header("Location:../login.php?admin=yes&login=error");
+        header("Location:../login.php?admin=yes&captcha=error");
     }
 }
 
@@ -157,11 +176,11 @@ if (isset($_POST['updateProduct'])) {
 		product_weight=:product_weight
 		WHERE product_id={$_POST['product_id']}");
     $update = $save->execute(array(
-        'product_img' => $_POST['product_img'],
-        'category_id' => $_POST['category_id'],
-        'product_title' => $_POST['product_title'],
-        'product_price' => $_POST['product_price'],
-        'product_weight' => $_POST['product_weight']
+        'product_img' => htmlspecialchars($_POST['product_img']),
+        'category_id' => htmlspecialchars($_POST['category_id']),
+        'product_title' => htmlspecialchars($_POST['product_title']),
+        'product_price' => htmlspecialchars($_POST['product_price']),
+        'product_weight' => htmlspecialchars($_POST['product_weight'])
     ));
 
     if ($update) {
@@ -186,11 +205,11 @@ if (isset($_POST['addProduct'])) {
 		");
 
     $insert = $addProduct->execute(array(
-        'product_img' => $_POST['product_img'],
-        'category_id' => $_POST['category_id'],
-        'product_title' => $_POST['product_title'],
-        'product_price' => $_POST['product_price'],
-        'product_weight' => $_POST['product_weight']
+        'product_img' => htmlspecialchars($_POST['product_img']),
+        'category_id' => htmlspecialchars($_POST['category_id']),
+        'product_title' => htmlspecialchars($_POST['product_title']),
+        'product_price' => htmlspecialchars($_POST['product_price']),
+        'product_weight' => htmlspecialchars($_POST['product_weight'])
     ));
 
     if ($insert) {
